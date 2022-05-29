@@ -1,18 +1,20 @@
 import React from "react";
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 
-// ①コンポーネントをメモ化
-const Child_1 = React.memo(() => {
+// ①Propsの受け取りはない子コンポーネント
+const Child_1 = () => {
   return (
     <p>Child_1コンポーネント</p>
   );
-});
-const Child_2 = React.memo((props: { handleClick: () => void }) => {
+};
+
+// ②callback関数をPropsで受け取っている子コンポーネント
+const Child_2 = (props: { handleClick: () => void }) => {
   return (
     <p>Child_2コンポーネント</p>
-    // <button onClick={props.handleClick}>Child_2コンポーネント</button>
+// <button onClick={props.handleClick}>Child_2コンポーネント</button>
   );
-});
+};
 
 export default function Parent() {
   const [text, setText] = useState("");
@@ -20,19 +22,20 @@ export default function Parent() {
     setText(e.target.value);
   };
 
-// ②コールバック関数のメモ化
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     console.log("click");
-  },[]);
+  };
 
-// ③重い処理をメモ化
+
   const [count, setCount] = useState(0);
   const double = (count: number) => {
     let i = 0;
     while (i < 1000000000) i++;
     return count * 2;
   };
-  const doubledCount = useMemo(() => double(count),[count]);
+
+// ③計算に時間が掛かる重い処理結果を格納している値
+  const doubledCount = double(count);
 
   return (
     <div>
@@ -40,7 +43,7 @@ export default function Parent() {
       <input type="text" onChange={changeText} />
       <Child_1 />
       <Child_2 handleClick={handleClick} />
-      <p>重い処理</p>
+      <p>親コンポーネント側での重い処理</p>
       <p>
         Counter: {count}, {doubledCount}
       </p>
@@ -48,9 +51,6 @@ export default function Parent() {
     </div>
   );
 }
-
-Child_1.displayName = 'Child_1';
-Child_2.displayName = 'Child_2';
 
 Child_1.whyDidYouRender = true;
 Child_2.whyDidYouRender = true;
