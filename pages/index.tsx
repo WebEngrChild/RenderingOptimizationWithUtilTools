@@ -40,7 +40,7 @@ export default function Parent() {
       <input type="text" onChange={changeText} />
       <Child_1 />
       <Child_2 handleClick={handleClick} />
-      <p>重い処理</p>
+      <p>親コンポーネント側での重い処理</p>
       <p>
         Counter: {count}, {doubledCount}
       </p>
